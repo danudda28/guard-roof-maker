@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
-import ceoImg from "@/assets/ceo.jpg";
+const ceoImg = "/images/ceo.jpg";
 import { Reveal } from "@/components/Reveal";
 
 const STATS = [

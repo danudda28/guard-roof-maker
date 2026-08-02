@@ -1,7 +1,7 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { ChevronDown } from "lucide-react";
-import heroImg from "@/assets/hero-gard.jpg";
+const heroImg = "/images/hero-gard.jpg";
 import { MetalButton } from "@/components/ui/metal-button";
 import { useLead } from "@/components/lead/LeadContext";
 
@@ -13,8 +13,12 @@ export function Hero() {
   const { openForm } = useLead();
 
   return (
-    <section id="top" ref={ref} className="relative flex min-h-[100svh] items-center overflow-hidden">
-      <motion.div style={{ y }} className="absolute inset-0 -z-10">
+    <section
+      id="top"
+      ref={ref}
+      className="relative isolate flex min-h-[100svh] items-center overflow-hidden"
+    >
+      <motion.div style={{ y }} className="absolute inset-0 z-0">
         <img
           src={heroImg}
           alt="Gard metalic modern antracit montat în fața unei case contemporane"
@@ -26,7 +30,7 @@ export function Hero() {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/70" />
       </motion.div>
 
-      <div className="mx-auto w-full max-w-7xl px-5 pt-28 pb-24">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-5 pt-28 pb-24">
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
