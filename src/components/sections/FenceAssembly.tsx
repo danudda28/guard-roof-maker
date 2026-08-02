@@ -58,13 +58,13 @@ export function FenceAssembly() {
 
         <motion.div
           style={{ opacity: captionOpacity, y: captionY }}
-          className="absolute inset-x-0 bottom-20 z-20 px-6 text-center"
+          className="pointer-events-none absolute inset-x-0 bottom-16 z-20 px-6 text-center"
         >
-          <p className="font-display text-xl font-bold uppercase sm:text-3xl">
+          <p className="font-display text-xl font-bold uppercase sm:text-3xl drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)]">
             Fiecare gard, montat cu <span className="text-gold">precizie milimetrică</span>
           </p>
-          <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">
-            Stâlpi, traverse și lamele tip jaluzea — din producția noastră, potrivite din prima.
+          <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+            Model real MX 60 DUO — lamele tip jaluzea din producția Metallic Group.
           </p>
         </motion.div>
 

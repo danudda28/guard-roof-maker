@@ -1,5 +1,10 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ContactShadows, Environment, useGLTF } from "@react-three/drei";
+import {
+  ContactShadows,
+  Environment,
+  Lightformer,
+  useGLTF,
+} from "@react-three/drei";
 import {
   createContext,
   Suspense,
@@ -21,32 +26,29 @@ function useProgress() {
   return ctx;
 }
 
-function damp(current: number, target: number, lambda: number, dt: number) {
-  return THREE.MathUtils.damp(current, target, lambda, dt);
+function damp(n: number, t: number, lambda: number, dt: number) {
+  return THREE.MathUtils.damp(n, t, lambda, dt);
 }
-
 function range(p: number, a: number, b: number) {
   return THREE.MathUtils.clamp((p - a) / (b - a), 0, 1);
 }
-
 function easeOutCubic(t: number) {
   return 1 - Math.pow(1 - t, 3);
 }
 
-type Phase = "post" | "side" | "slat" | "clip" | "cap";
+type Phase = "side" | "slat" | "clip" | "cap";
 
 function classify(obj: THREE.Object3D): Phase {
-  const chain: string[] = [];
+  const names: string[] = [];
   let cur: THREE.Object3D | null = obj;
   while (cur) {
-    if (cur.name) chain.push(cur.name.toLowerCase());
+    if (cur.name) names.push(cur.name.toLowerCase());
     cur = cur.parent;
   }
-  const blob = chain.join(" ");
+  const blob = names.join(" ");
   if (blob.includes("capac") || blob.includes("autoforant")) return "cap";
   if (blob.includes("laterale")) return "side";
-  if (blob.includes("cleme") || blob.includes("null")) return "clip";
-  if (blob.includes("stalp") || blob.includes("cube")) return "post";
+  if (blob.includes("cleme") || /\bnull\b/.test(blob)) return "clip";
   return "slat";
 }
 
@@ -59,73 +61,79 @@ type Piece = {
   order: number;
 };
 
-const PHASE_WINDOW: Record<Phase, { start: number; span: number }> = {
-  post: { start: 0.05, span: 0.18 },
-  side: { start: 0.18, span: 0.14 },
-  slat: { start: 0.28, span: 0.42 },
-  clip: { start: 0.55, span: 0.25 },
-  cap: { start: 0.78, span: 0.12 },
+const PHASE: Record<Phase, { start: number; span: number; count: number }> = {
+  side: { start: 0.08, span: 0.16, count: 4 },
+  slat: { start: 0.22, span: 0.45, count: 12 },
+  clip: { start: 0.52, span: 0.28, count: 10 },
+  cap: { start: 0.78, span: 0.14, count: 3 },
 };
 
-function prepareClone(scene: THREE.Group) {
-  const root = scene.clone(true);
+const METAL = new THREE.Color("#5c646e"); // anthracite readable on dark bg
+
+function polishMaterials(root: THREE.Object3D) {
   root.traverse((obj) => {
-    if ((obj as THREE.Mesh).isMesh) {
-      const mesh = obj as THREE.Mesh;
-      mesh.castShadow = true;
-      mesh.receiveShadow = true;
-      const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-      mats.forEach((m) => {
-        const mat = m as THREE.MeshStandardMaterial;
-        if (!mat) return;
-        mat.metalness = 0.88;
-        mat.roughness = 0.32;
-        mat.envMapIntensity = 1.25;
-        if (!mat.color || mat.color.getHex() === 0xffffff) {
-          mat.color = new THREE.Color("#3a3f46");
-        }
-        mat.needsUpdate = true;
+    const mesh = obj as THREE.Mesh;
+    if (!mesh.isMesh) return;
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    const src = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+    mesh.material = src.map((m) => {
+      const base = (m as THREE.MeshStandardMaterial)?.color?.clone?.() ?? METAL.clone();
+      // lift very dark CAD colors so studio light can read edges
+      const lifted = base.clone().lerp(METAL, 0.55);
+      const mat = new THREE.MeshPhysicalMaterial({
+        color: lifted,
+        metalness: 0.82,
+        roughness: 0.28,
+        envMapIntensity: 1.85,
+        clearcoat: 0.35,
+        clearcoatRoughness: 0.3,
+        reflectivity: 0.6,
+        sheen: 0.15,
+        sheenRoughness: 0.4,
+        sheenColor: new THREE.Color("#d7dde6"),
       });
-    }
+      return mat;
+    });
   });
-  return root;
 }
 
-function fitRoot(root: THREE.Object3D, targetHeight = 2.35) {
+function fitAndFrame(root: THREE.Object3D, targetHeight = 2.05) {
   root.updateMatrixWorld(true);
   const box = new THREE.Box3().setFromObject(root);
   const size = box.getSize(new THREE.Vector3());
   const center = box.getCenter(new THREE.Vector3());
   root.position.sub(center);
-  const s = targetHeight / Math.max(size.y, 0.001);
-  root.scale.setScalar(s);
+  root.scale.setScalar(targetHeight / Math.max(size.y, 0.001));
   root.updateMatrixWorld(true);
-  // re-center after scale
+
   const box2 = new THREE.Box3().setFromObject(root);
-  const center2 = box2.getCenter(new THREE.Vector3());
-  root.position.x -= center2.x;
-  root.position.y -= center2.y;
-  root.position.z -= center2.z;
-  // sit on ground-ish
+  const c2 = box2.getCenter(new THREE.Vector3());
+  root.position.x -= c2.x;
+  root.position.y -= c2.y;
+  root.position.z -= c2.z;
+
   const box3 = new THREE.Box3().setFromObject(root);
-  root.position.y -= box3.min.y + 1.15;
-  return new THREE.Box3().setFromObject(root);
+  root.position.y -= box3.min.y + 1.05;
+  // slight product angle so louvers read in 3D
+  root.rotation.y = -0.48;
+  root.rotation.x = 0.06;
 }
 
-function collectPieces(root: THREE.Object3D, phaseOverride?: Phase): Piece[] {
+function collectPieces(root: THREE.Object3D): Piece[] {
   const pieces: Piece[] = [];
-  const byPhase: Record<Phase, number> = { post: 0, side: 0, slat: 0, clip: 0, cap: 0 };
+  const counts: Record<Phase, number> = { side: 0, slat: 0, clip: 0, cap: 0 };
   root.updateMatrixWorld(true);
   root.traverse((obj) => {
     if (!(obj as THREE.Mesh).isMesh) return;
-    const phase = phaseOverride ?? classify(obj);
+    const phase = classify(obj);
     pieces.push({
       obj,
       originPos: obj.position.clone(),
       originQuat: obj.quaternion.clone(),
       originScale: obj.scale.clone(),
       phase,
-      order: byPhase[phase]++,
+      order: counts[phase]++,
     });
   });
   return pieces;
@@ -134,73 +142,71 @@ function collectPieces(root: THREE.Object3D, phaseOverride?: Phase): Piece[] {
 function animatePieces(pieces: Piece[], p: number, dt: number) {
   const tmpEuler = new THREE.Euler();
   const tmpQuat = new THREE.Quaternion();
+  const offset = new THREE.Vector3();
 
   for (const piece of pieces) {
-    const win = PHASE_WINDOW[piece.phase];
-    const countHint =
-      piece.phase === "slat" ? 12 : piece.phase === "clip" ? 10 : piece.phase === "post" ? 4 : 3;
-    const staggered = win.start + (piece.order % countHint) * (win.span / (countHint + 1));
-    const local = easeOutCubic(range(p, staggered, staggered + win.span * 0.55));
+    const win = PHASE[piece.phase];
+    const staggered =
+      win.start + (piece.order % win.count) * (win.span / (win.count + 1.5));
+    const local = easeOutCubic(range(p, staggered, staggered + win.span * 0.5));
 
-    let ox = 0;
-    let oy = 0;
-    let oz = 0;
-    let rx = 0;
-    let ry = 0;
-    let rz = 0;
+    let ox = 0,
+      oy = 0,
+      oz = 0,
+      rx = 0,
+      ry = 0,
+      rz = 0;
 
-    if (piece.phase === "post") {
-      oy = -2.2;
-      rx = 0.5;
-    } else if (piece.phase === "side") {
-      ox = piece.order % 2 === 0 ? -1.8 : 1.8;
-      ry = piece.order % 2 === 0 ? -0.8 : 0.8;
+    if (piece.phase === "side") {
+      ox = piece.order % 2 === 0 ? -2.2 : 2.2;
+      ry = piece.order % 2 === 0 ? -0.9 : 0.9;
     } else if (piece.phase === "slat") {
-      oy = 2.4;
-      oz = 1.4;
-      rx = piece.order % 2 === 0 ? 1.4 : -1.2;
+      oy = 2.6;
+      oz = 1.8;
+      rx = piece.order % 2 === 0 ? 1.55 : -1.35;
     } else if (piece.phase === "clip") {
-      oz = -1.2;
-      ox = (piece.order % 2 === 0 ? -1 : 1) * 0.6;
-      rz = 0.9;
+      oz = -1.5;
+      ox = (piece.order % 2 === 0 ? -1 : 1) * 0.7;
+      rz = 1.0;
     } else {
-      oy = 1.6;
-      rx = -1.1;
+      oy = 1.8;
+      rx = -1.2;
     }
 
-    const targetPos = piece.originPos
-      .clone()
-      .add(
-        new THREE.Vector3(ox, oy, oz).multiplyScalar(1 - local),
-      );
-    piece.obj.position.x = damp(piece.obj.position.x, targetPos.x, 8, dt);
-    piece.obj.position.y = damp(piece.obj.position.y, targetPos.y, 8, dt);
-    piece.obj.position.z = damp(piece.obj.position.z, targetPos.z, 8, dt);
+    offset.set(ox, oy, oz).multiplyScalar(1 - local);
+    const tx = piece.originPos.x + offset.x;
+    const ty = piece.originPos.y + offset.y;
+    const tz = piece.originPos.z + offset.z;
+
+    piece.obj.position.x = damp(piece.obj.position.x, tx, 7.5, dt);
+    piece.obj.position.y = damp(piece.obj.position.y, ty, 7.5, dt);
+    piece.obj.position.z = damp(piece.obj.position.z, tz, 7.5, dt);
 
     tmpEuler.set(rx * (1 - local), ry * (1 - local), rz * (1 - local));
-    tmpQuat.setFromEuler(tmpEuler).multiply(piece.originQuat);
-    piece.obj.quaternion.slerpQuaternions(piece.obj.quaternion, tmpQuat, 1 - Math.exp(-8 * dt));
+    tmpQuat.setFromEuler(tmpEuler).premultiply(piece.originQuat);
+    piece.obj.quaternion.slerp(tmpQuat, 1 - Math.exp(-7 * dt));
 
-    const s = 0.2 + local * 0.8;
-    piece.obj.scale.x = damp(piece.obj.scale.x, piece.originScale.x * s, 9, dt);
-    piece.obj.scale.y = damp(piece.obj.scale.y, piece.originScale.y * s, 9, dt);
-    piece.obj.scale.z = damp(piece.obj.scale.z, piece.originScale.z * s, 9, dt);
+    const s = THREE.MathUtils.lerp(0.35, 1, local);
+    piece.obj.scale.x = damp(piece.obj.scale.x, piece.originScale.x * s, 8, dt);
+    piece.obj.scale.y = damp(piece.obj.scale.y, piece.originScale.y * s, 8, dt);
+    piece.obj.scale.z = damp(piece.obj.scale.z, piece.originScale.z * s, 8, dt);
 
-    piece.obj.visible = local > 0.02 || p > win.start - 0.02;
+    piece.obj.visible = local > 0.015 || p > win.start - 0.03;
   }
 }
 
 function MetallicPanel() {
   const progress = useProgress();
   const { scene } = useGLTF("/models/mx60-duo.glb");
-  const root = useMemo(() => prepareClone(scene as THREE.Group), [scene]);
-  const pieces = useMemo(() => {
-    fitRoot(root, 2.2);
-    return collectPieces(root);
-  }, [root]);
+  const root = useMemo(() => {
+    const clone = scene.clone(true) as THREE.Group;
+    polishMaterials(clone);
+    fitAndFrame(clone, 2.05);
+    return clone;
+  }, [scene]);
+  const pieces = useMemo(() => collectPieces(root), [root]);
 
   useLayoutEffect(() => {
-    // start disassembled
     animatePieces(pieces, 0, 1);
   }, [pieces]);
 
@@ -211,82 +217,55 @@ function MetallicPanel() {
   return <primitive object={root} />;
 }
 
-function Posts() {
-  const progress = useProgress();
-  const { scene } = useGLTF("/models/stalp.glb");
-  const left = useMemo(() => prepareClone(scene as THREE.Group), [scene]);
-  const right = useMemo(() => prepareClone(scene as THREE.Group), [scene]);
-
-  const leftPieces = useMemo(() => {
-    fitRoot(left, 2.55);
-    left.position.x = -1.55;
-    return collectPieces(left, "post");
-  }, [left]);
-
-  const rightPieces = useMemo(() => {
-    fitRoot(right, 2.55);
-    right.position.x = 1.55;
-    return collectPieces(right, "post");
-  }, [right]);
-
-  useLayoutEffect(() => {
-    animatePieces(leftPieces, 0, 1);
-    animatePieces(rightPieces, 0, 1);
-  }, [leftPieces, rightPieces]);
-
-  useFrame((_, dt) => {
-    const p = progress.current;
-    animatePieces(leftPieces, p, dt);
-    animatePieces(rightPieces, p, dt);
-  });
-
+function StudioLights() {
   return (
     <>
-      <primitive object={left} />
-      <primitive object={right} />
-    </>
-  );
-}
-
-function WeldSparks() {
-  const ref = useRef<THREE.Points>(null);
-  const progress = useProgress();
-  const positions = useMemo(() => {
-    const arr = new Float32Array(36 * 3);
-    let i = 0;
-    for (const x of [-1.55, 0, 1.55]) {
-      for (let k = 0; k < 12; k++) {
-        arr[i++] = x + (Math.random() - 0.5) * 0.15;
-        arr[i++] = -0.8 + Math.random() * 1.6;
-        arr[i++] = (Math.random() - 0.5) * 0.2;
-      }
-    }
-    return arr;
-  }, []);
-
-  useFrame((state, dt) => {
-    const pts = ref.current;
-    if (!pts) return;
-    const local = range(progress.current, 0.86, 0.95);
-    const mat = pts.material as THREE.PointsMaterial;
-    mat.opacity = damp(mat.opacity, local > 0 ? Math.sin(local * Math.PI) : 0, 10, dt);
-    pts.rotation.y = state.clock.elapsedTime * 0.35;
-  });
-
-  return (
-    <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-      </bufferGeometry>
-      <pointsMaterial
-        color="#f0c018"
-        size={0.05}
-        transparent
-        opacity={0}
-        depthWrite={false}
-        blending={THREE.AdditiveBlending}
+      <hemisphereLight args={["#f3f6fa", "#1a1d24", 0.55]} />
+      <ambientLight intensity={0.55} />
+      {/* key */}
+      <directionalLight
+        castShadow
+        position={[3.8, 5.5, 4.2]}
+        intensity={2.4}
+        color="#fff7ea"
+        shadow-mapSize={[2048, 2048]}
+        shadow-bias={-0.0002}
       />
-    </points>
+      {/* fill */}
+      <directionalLight position={[-4.2, 2.8, 2.2]} intensity={1.15} color="#c9d6e8" />
+      {/* rim */}
+      <directionalLight position={[-1.5, 3.2, -4]} intensity={1.4} color="#f0c018" />
+      <spotLight
+        position={[0, 6, 3]}
+        angle={0.55}
+        penumbra={0.8}
+        intensity={1.6}
+        color="#ffffff"
+      />
+      <Environment resolution={256}>
+        <Lightformer
+          form="rect"
+          intensity={3.2}
+          position={[0, 4, 2]}
+          scale={[8, 3, 1]}
+          color="#ffffff"
+        />
+        <Lightformer
+          form="ring"
+          intensity={1.6}
+          position={[0, 2, -3]}
+          scale={5}
+          color="#f0c018"
+        />
+        <Lightformer
+          form="rect"
+          intensity={1.2}
+          position={[-4, 1, 1]}
+          scale={[3, 6, 1]}
+          color="#a9c0df"
+        />
+      </Environment>
+    </>
   );
 }
 
@@ -296,17 +275,15 @@ function CameraRig() {
 
   useFrame((_, dt) => {
     const p = progress.current;
-    const intro = range(p, 0, 0.2);
-    const mid = range(p, 0.2, 0.75);
-    const end = range(p, 0.75, 1);
+    const reveal = easeOutCubic(range(p, 0.05, 0.95));
+    // strong 3/4 product angle → gentle orbit as it builds
+    const targetX = THREE.MathUtils.lerp(3.15, 1.55, reveal);
+    const targetY = THREE.MathUtils.lerp(1.15, 0.55, reveal);
+    const targetZ = THREE.MathUtils.lerp(4.35, 3.55, reveal);
 
-    const targetX = THREE.MathUtils.lerp(1.15, -0.45, mid) + end * 0.2;
-    const targetY = THREE.MathUtils.lerp(0.7, 0.2, intro) + mid * 0.08;
-    const targetZ = THREE.MathUtils.lerp(6.4, 4.1, easeOutCubic(range(p, 0.05, 0.92)));
-
-    camera.position.x = damp(camera.position.x, targetX, 3.2, dt);
-    camera.position.y = damp(camera.position.y, targetY, 3.2, dt);
-    camera.position.z = damp(camera.position.z, targetZ, 3.2, dt);
+    camera.position.x = damp(camera.position.x, targetX, 3.4, dt);
+    camera.position.y = damp(camera.position.y, targetY, 3.4, dt);
+    camera.position.z = damp(camera.position.z, targetZ, 3.4, dt);
     camera.lookAt(0, 0.05, 0);
   });
 
@@ -316,38 +293,21 @@ function CameraRig() {
 function Scene() {
   return (
     <>
-      <color attach="background" args={["#101218"]} />
-      <fog attach="fog" args={["#101218", 7.5, 16]} />
-      <ambientLight intensity={0.4} />
-      <directionalLight
-        castShadow
-        position={[4.5, 6.5, 3.2]}
-        intensity={1.55}
-        shadow-mapSize={[1024, 1024]}
-      />
-      <directionalLight position={[-3.5, 2.2, -2]} intensity={0.5} color="#9bb0c8" />
-      <spotLight
-        position={[0.2, 5.2, 2.4]}
-        angle={0.5}
-        penumbra={0.65}
-        intensity={1.15}
-        color="#f0c018"
-      />
-      <Environment preset="city" environmentIntensity={0.5} />
+      <color attach="background" args={["#151820"]} />
+      <fog attach="fog" args={["#151820", 10, 22]} />
+      <StudioLights />
       <CameraRig />
-      <Posts />
       <MetallicPanel />
-      <WeldSparks />
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.18, 0]} receiveShadow>
-        <circleGeometry args={[6.2, 64]} />
-        <meshStandardMaterial color="#12141a" metalness={0.35} roughness={0.88} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.06, 0]} receiveShadow>
+        <circleGeometry args={[7, 64]} />
+        <meshStandardMaterial color="#1b1f28" metalness={0.2} roughness={0.9} />
       </mesh>
       <ContactShadows
-        position={[0, -1.17, 0]}
-        opacity={0.55}
-        scale={11}
-        blur={2.6}
-        far={5}
+        position={[0, -1.05, 0]}
+        opacity={0.65}
+        scale={12}
+        blur={2.2}
+        far={6}
         color="#000"
       />
     </>
@@ -355,7 +315,6 @@ function Scene() {
 }
 
 useGLTF.preload("/models/mx60-duo.glb");
-useGLTF.preload("/models/stalp.glb");
 
 export default function FenceScene3D({
   progressRef,
@@ -364,16 +323,22 @@ export default function FenceScene3D({
 }) {
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
-  if (!ready) return <div className="absolute inset-0 bg-[#101218]" />;
+  if (!ready) return <div className="absolute inset-0 bg-[#151820]" />;
 
   return (
     <ProgressCtx.Provider value={progressRef}>
       <Canvas
         className="absolute inset-0"
         shadows
-        dpr={[1, 1.75]}
-        gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
-        camera={{ position: [1.15, 0.7, 6.4], fov: 36, near: 0.1, far: 40 }}
+        dpr={[1, 2]}
+        gl={{
+          antialias: true,
+          alpha: false,
+          powerPreference: "high-performance",
+          toneMapping: THREE.ACESFilmicToneMapping,
+          toneMappingExposure: 1.35,
+        }}
+        camera={{ position: [3.15, 1.15, 4.35], fov: 34, near: 0.1, far: 50 }}
       >
         <Suspense fallback={null}>
           <Scene />
