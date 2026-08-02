@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X } from "lucide-react";
-import p1 from "@/assets/proiect-1.jpg";
-import p2 from "@/assets/proiect-2.jpg";
-import p3 from "@/assets/proiect-3.jpg";
-import p4 from "@/assets/proiect-4.jpg";
+const p1 = "/images/proiect-1.jpg";
+const p2 = "/images/proiect-2.jpg";
+const p3 = "/images/proiect-3.jpg";
+const p4 = "/images/proiect-4.jpg";
 import { Reveal } from "@/components/Reveal";
 
 type Cat = "toate" | "garduri" | "acoperisuri";

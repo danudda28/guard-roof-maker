@@ -1,7 +1,7 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { ChevronDown } from "lucide-react";
-import heroImg from "@/assets/hero-gard.jpg";
+const heroImg = "/images/hero-gard.jpg";
 import { MetalButton } from "@/components/ui/metal-button";
 import { useLead } from "@/components/lead/LeadContext";
 

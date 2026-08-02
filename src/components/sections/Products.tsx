@@ -1,7 +1,7 @@
 import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import { Check } from "lucide-react";
-import gardImg from "@/assets/produs-garduri.jpg";
-import tiglaImg from "@/assets/produs-tigla.jpg";
+const gardImg = "/images/produs-garduri.jpg";
+const tiglaImg = "/images/produs-tigla.jpg";
 import { Reveal } from "@/components/Reveal";
 import { MetalButton } from "@/components/ui/metal-button";
 import { useLead, type ProjectType } from "@/components/lead/LeadContext";
