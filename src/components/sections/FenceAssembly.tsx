@@ -2,7 +2,11 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform, type MotionValue } from "motion/react";
 
 const POSTS = [70, 350, 630, 910];
-const BAYS = [0, 1, 2];
+const BAYS: Array<[number, number]> = [
+  [POSTS[0]!, POSTS[1]!],
+  [POSTS[1]!, POSTS[2]!],
+  [POSTS[2]!, POSTS[3]!],
+];
 const SLATS_PER_BAY = 7;
 
 function Piece({
@@ -86,7 +90,7 @@ export function FenceAssembly() {
             ))}
 
             {/* traverse */}
-            {BAYS.map((b) =>
+            {BAYS.map(([x0, x1], b) =>
               [90, 360].map((y, j) => (
                 <Piece
                   key={`rail-${b}-${y}`}
@@ -96,9 +100,9 @@ export function FenceAssembly() {
                   x={j % 2 === 0 ? -320 : 320}
                 >
                   <rect
-                    x={POSTS[b] + 20}
+                    x={x0 + 20}
                     y={y}
-                    width={POSTS[b + 1] - POSTS[b] - 14}
+                    width={x1 - x0 - 14}
                     height="10"
                     rx="2"
                     fill="#4a4f57"
@@ -108,7 +112,7 @@ export function FenceAssembly() {
             )}
 
             {/* lamele */}
-            {BAYS.map((b) =>
+            {BAYS.map(([x0, x1], b) =>
               Array.from({ length: SLATS_PER_BAY }).map((_, s) => {
                 const step = 0.012;
                 const start = 0.46 + (b * SLATS_PER_BAY + s) * step;
@@ -121,9 +125,9 @@ export function FenceAssembly() {
                     y={-120}
                   >
                     <rect
-                      x={POSTS[b] + 22}
+                      x={x0 + 22}
                       y={106 + s * 36}
-                      width={POSTS[b + 1] - POSTS[b] - 18}
+                      width={x1 - x0 - 18}
                       height="26"
                       rx="2"
                       fill="url(#mg-slat)"
@@ -138,7 +142,7 @@ export function FenceAssembly() {
               <motion.g key={`weld-${x}`} style={{ opacity: glow }}>
                 <circle cx={x + 26} cy={95} r="16" fill="#f0c018" opacity="0.35" />
                 <circle cx={x + 26} cy={365} r="16" fill="#f0c018" opacity="0.35" />
-                <circle cx={POSTS[i + 1]} cy={95} r="10" fill="#fff3c4" opacity="0.6" />
+                <circle cx={POSTS[i + 1]!} cy={95} r="10" fill="#fff3c4" opacity="0.6" />
               </motion.g>
             ))}
           </svg>
