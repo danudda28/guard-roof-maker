@@ -63,11 +63,9 @@ function normalizeModel(root: THREE.Object3D) {
   root.updateMatrixWorld(true);
   const box = new THREE.Box3().setFromObject(root);
   const size = box.getSize(new THREE.Vector3());
-  const longest = Math.max(size.x, size.y, size.z);
-  let scale = 1;
-  if (longest > 5) scale = 1.35 / longest;
-  else if (longest < 0.25) scale = 1.35 / Math.max(longest, 1e-6);
-  else scale = 1.15; // slight enlarge for hero framing
+  const longest = Math.max(size.x, size.y, size.z, 1e-6);
+  // Always fit the model to a predictable size so the camera framing holds.
+  const scale = 1.7 / longest;
   root.scale.setScalar(scale);
   root.updateMatrixWorld(true);
   const box2 = new THREE.Box3().setFromObject(root);
