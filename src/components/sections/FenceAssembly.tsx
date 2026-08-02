@@ -65,7 +65,7 @@ export function FenceAssembly() {
             Fiecare gard, montat cu <span className="text-gold">precizie milimetrică</span>
           </p>
           <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
-            Model real MX 60 DUO — lamele tip jaluzea din producția Metallic Group.
+            Model real MX 25 DUO — lamele tip jaluzea din producția Metallic Group.
           </p>
         </motion.div>
 

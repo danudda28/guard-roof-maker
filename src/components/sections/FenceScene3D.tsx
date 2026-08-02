@@ -61,7 +61,7 @@ function applyMaterials(root: THREE.Object3D) {
       map: src?.map ?? null,
       metalness: 0.55,
       roughness: 0.38,
-      envMapIntensity: 1.25,
+      envMapIntensity: 0.85,
       side: THREE.DoubleSide,
     });
   });
@@ -190,13 +190,13 @@ function Scene() {
     <>
       <color attach="background" args={["#000000"]} />
       <fog attach="fog" args={["#000000", 12, 26]} />
-      <hemisphereLight args={["#f2f5f8", "#1a2030", 0.45]} />
-      <ambientLight intensity={0.4} />
+      <hemisphereLight args={["#f2f5f8", "#000000", 0.3]} />
+      <ambientLight intensity={0.22} />
       <directionalLight castShadow position={[3.5, 5.5, 2.5]} intensity={2.4} color="#ffffff" />
       <directionalLight position={[-2.5, 2, 3]} intensity={0.85} color="#c5d2e4" />
       <directionalLight position={[0.5, 2.5, -3]} intensity={1.2} color="#e8b84a" />
       <Suspense fallback={null}>
-        <Environment preset="apartment" environmentIntensity={0.7} />
+        <Environment preset="apartment" environmentIntensity={0.45} />
       </Suspense>
       <CameraRig />
       <FenceModel />
@@ -234,7 +234,7 @@ export default function FenceScene3D({
           alpha: false,
           powerPreference: "high-performance",
           toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1.2,
+          toneMappingExposure: 0.95,
         }}
         camera={{ position: [1.6, 0.72, 3.55], fov: 35, near: 0.08, far: 80 }}
       >
