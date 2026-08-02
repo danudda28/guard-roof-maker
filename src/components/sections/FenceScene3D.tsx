@@ -81,7 +81,15 @@ function getAnimTargets(root: THREE.Object3D): THREE.Object3D[] {
   while (node.children.length === 1 && (node.children[0]?.children.length ?? 0) > 0) {
     node = node.children[0]!;
   }
-  return node.children.length ? [...node.children] : [node];
+  let list: THREE.Object3D[] = node.children.length ? [...node.children] : [node];
+
+  // Expand into sub-parts until the assembly reads as many distinct pieces.
+  while (list.length < 8) {
+    const next = list.flatMap((o) => (o.children.length ? [...o.children] : [o]));
+    if (next.length <= list.length || next.length > 40) break;
+    list = next;
+  }
+  return list;
 }
 
 function FenceModel() {
