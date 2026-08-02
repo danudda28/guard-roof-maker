@@ -49,11 +49,16 @@ function applyMaterials(root: THREE.Object3D) {
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     mesh.frustumCulled = false;
+    // Keep the model's own base color (RAL from the CAD export); only tune
+    // the finish so it reads as coated metal under our lighting.
+    const src = mesh.material as THREE.MeshStandardMaterial | undefined;
+    const baseColor = src?.color ? src.color.clone() : new THREE.Color("#44322d");
     mesh.material = new THREE.MeshStandardMaterial({
-      color: new THREE.Color("#9aa3ad"),
-      metalness: 0.88,
-      roughness: 0.22,
-      envMapIntensity: 1.5,
+      color: baseColor,
+      map: src?.map ?? null,
+      metalness: 0.55,
+      roughness: 0.38,
+      envMapIntensity: 1.25,
       side: THREE.DoubleSide,
     });
   });
