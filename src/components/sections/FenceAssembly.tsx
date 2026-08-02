@@ -35,7 +35,7 @@ export function FenceAssembly() {
   const barScale = scrollYProgress;
 
   return (
-    <section id="asamblare" ref={sectionRef} className="relative h-[420vh] bg-black">
+    <section id="asamblare" ref={sectionRef} className="relative h-[230vh] bg-black">
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         {Scene ? (
           <Scene progressRef={progressRef} interactive={playing} />
