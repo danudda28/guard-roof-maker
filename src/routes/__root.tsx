@@ -87,6 +87,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "Metallic Group" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:title", content: "Metallic Group — garduri și acoperișuri metalice" },
+      { name: "twitter:title", content: "Metallic Group — garduri și acoperișuri metalice" },
+      { property: "og:description", content: "Producător român de garduri metalice, țiglă metalică și tablă click. Consultanță gratuită și livrare în toată țara." },
+      { name: "twitter:description", content: "Producător român de garduri metalice, țiglă metalică și tablă click. Consultanță gratuită și livrare în toată țara." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/191d9569-b7c5-4936-8375-2c74d7e264d5/id-preview-c1fdf252--70211a83-ddde-4c96-a677-ad391d4db3ed.lovable.app-1785676294055.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/191d9569-b7c5-4936-8375-2c74d7e264d5/id-preview-c1fdf252--70211a83-ddde-4c96-a677-ad391d4db3ed.lovable.app-1785676294055.png" },
     ],
     links: [
       {
