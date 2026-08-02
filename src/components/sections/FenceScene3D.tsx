@@ -73,7 +73,7 @@ function normalizeModel(root: THREE.Object3D) {
   const size = box.getSize(new THREE.Vector3());
   const longest = Math.max(size.x, size.y, size.z, 1e-6);
   // Always fit the model to a predictable size so the camera framing holds.
-  const scale = 1.35 / longest;
+  const scale = 1.8 / longest;
   root.scale.setScalar(scale);
   root.updateMatrixWorld(true);
   const box2 = new THREE.Box3().setFromObject(root);
@@ -145,7 +145,7 @@ function FenceModel() {
 
   useFrame((_, dt) => {
     // 0 → ~0.55: parts fly in and lock; then hold
-    const assembleP = ease(range(progress.current, 0, 0.55));
+    const assembleP = ease(range(progress.current, 0, 0.85));
     for (const g of groups) {
       const t = ease(range(assembleP, g.start, g.end));
       g.obj.position.x = damp(g.obj.position.x, THREE.MathUtils.lerp(g.from.x, g.home.x, t), 8, dt);
@@ -174,13 +174,13 @@ function CameraRig({ paused }: { paused: boolean }) {
     if (paused) return;
     const t = ease(range(progress.current, 0, 1));
     // Eye-level product shot, pulled back so the whole fence stays in frame
-    const x = THREE.MathUtils.lerp(2.0, 1.45, t);
-    const y = THREE.MathUtils.lerp(0.9, 0.8, t);
-    const z = THREE.MathUtils.lerp(4.6, 3.9, t);
+    const x = THREE.MathUtils.lerp(2.0, 1.5, t);
+    const y = THREE.MathUtils.lerp(1.15, 1.02, t);
+    const z = THREE.MathUtils.lerp(4.7, 4.1, t);
     camera.position.x = damp(camera.position.x, x, 3.5, dt);
     camera.position.y = damp(camera.position.y, y, 3.5, dt);
     camera.position.z = damp(camera.position.z, z, 3.5, dt);
-    camera.lookAt(0, 0.7, 0);
+    camera.lookAt(0, 0.93, 0);
   });
 
   return null;
@@ -257,7 +257,7 @@ export default function FenceScene3D({
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 0.95,
         }}
-        camera={{ position: [2.0, 0.9, 4.6], fov: 35, near: 0.08, far: 80 }}
+        camera={{ position: [2.0, 1.15, 4.7], fov: 35, near: 0.08, far: 80 }}
       >
         <Suspense fallback={null}>
           <Scene interactive={interactive} />
