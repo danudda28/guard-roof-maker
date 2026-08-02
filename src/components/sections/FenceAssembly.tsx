@@ -33,12 +33,12 @@ export function FenceAssembly() {
   const barScale = scrollYProgress;
 
   return (
-    <section id="asamblare" ref={sectionRef} className="relative h-[420vh] bg-[#12161e]">
+    <section id="asamblare" ref={sectionRef} className="relative h-[420vh] bg-black">
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         {Scene ? (
           <Scene progressRef={progressRef} />
         ) : (
-          <div className="absolute inset-0 bg-[#12161e]" />
+          <div className="absolute inset-0 bg-black" />
         )}
 
         <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-36 bg-gradient-to-b from-[#12161e]/90 to-transparent" />

@@ -14,7 +14,9 @@ import {
 import * as THREE from "three";
 
 const ProgressCtx = createContext<MutableRefObject<number> | null>(null);
-const MODEL_URL = "/models/mx60-duo.glb";
+import modelAsset from "@/assets/mx25-duo.glb.asset.json";
+
+const MODEL_URL = modelAsset.url;
 
 function useProgress() {
   const ctx = useContext(ProgressCtx);
@@ -185,8 +187,8 @@ function CameraRig() {
 function Scene() {
   return (
     <>
-      <color attach="background" args={["#12161e"]} />
-      <fog attach="fog" args={["#12161e", 10, 22]} />
+      <color attach="background" args={["#000000"]} />
+      <fog attach="fog" args={["#000000", 12, 26]} />
       <hemisphereLight args={["#f2f5f8", "#1a2030", 0.45]} />
       <ambientLight intensity={0.4} />
       <directionalLight castShadow position={[3.5, 5.5, 2.5]} intensity={2.4} color="#ffffff" />
@@ -218,7 +220,7 @@ export default function FenceScene3D({
 }) {
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
-  if (!ready) return <div className="absolute inset-0 bg-[#12161e]" />;
+  if (!ready) return <div className="absolute inset-0 bg-black" />;
 
   return (
     <ProgressCtx.Provider value={progressRef}>
