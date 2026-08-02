@@ -33,12 +33,12 @@ export function FenceAssembly() {
   const barScale = scrollYProgress;
 
   return (
-    <section id="asamblare" ref={sectionRef} className="relative h-[420vh] bg-[#12161e]">
+    <section id="asamblare" ref={sectionRef} className="relative h-[420vh] bg-black">
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         {Scene ? (
           <Scene progressRef={progressRef} />
         ) : (
-          <div className="absolute inset-0 bg-[#12161e]" />
+          <div className="absolute inset-0 bg-black" />
         )}
 
         <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-36 bg-gradient-to-b from-[#12161e]/90 to-transparent" />
@@ -53,7 +53,7 @@ export function FenceAssembly() {
             Gardul care se asamblează
           </h2>
           <p className="mx-auto mt-3 max-w-lg text-sm text-muted-foreground">
-            Scroll — gardul real MX 60 DUO se asamblează în 3D, piesă cu piesă.
+            Scroll — gardul real MX 25 DUO se asamblează în 3D, piesă cu piesă.
           </p>
         </motion.div>
 
@@ -65,7 +65,7 @@ export function FenceAssembly() {
             Fiecare gard, montat cu <span className="text-gold">precizie milimetrică</span>
           </p>
           <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
-            Model real MX 60 DUO — lamele tip jaluzea din producția Metallic Group.
+            Model real MX 25 DUO — lamele tip jaluzea din producția Metallic Group.
           </p>
         </motion.div>
 
