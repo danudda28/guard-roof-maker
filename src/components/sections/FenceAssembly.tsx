@@ -32,9 +32,6 @@ export function FenceAssembly() {
     };
   }, []);
 
-  const introOpacity = useTransform(scrollYProgress, [0, 0.05, 0.12], [1, 1, 0]);
-  const captionOpacity = useTransform(scrollYProgress, [0.84, 0.92], [0, 1]);
-  const captionY = useTransform(scrollYProgress, [0.84, 0.92], [30, 0]);
   const barScale = scrollYProgress;
 
   return (
