@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ComponentType, type MutableRefObject } from "react";
-import { AnimatePresence, motion, useMotionValueEvent, useScroll, useTransform } from "motion/react";
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
 import { Hand, X, ZoomIn } from "lucide-react";
 
 type SceneProps = { progressRef: MutableRefObject<number>; interactive?: boolean };
