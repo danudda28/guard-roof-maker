@@ -65,7 +65,7 @@ function normalizeModel(root: THREE.Object3D) {
   const size = box.getSize(new THREE.Vector3());
   const longest = Math.max(size.x, size.y, size.z, 1e-6);
   // Always fit the model to a predictable size so the camera framing holds.
-  const scale = 1.7 / longest;
+  const scale = 1.35 / longest;
   root.scale.setScalar(scale);
   root.updateMatrixWorld(true);
   const box2 = new THREE.Box3().setFromObject(root);
