@@ -257,7 +257,7 @@ export default function FenceScene3D({
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 0.95,
         }}
-        camera={{ position: [1.6, 0.72, 3.55], fov: 35, near: 0.08, far: 80 }}
+        camera={{ position: [2.0, 0.9, 4.6], fov: 35, near: 0.08, far: 80 }}
       >
         <Suspense fallback={null}>
           <Scene interactive={interactive} />
