@@ -1,5 +1,5 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ContactShadows, Environment, useGLTF } from "@react-three/drei";
+import { ContactShadows, Environment, OrbitControls, useGLTF } from "@react-three/drei";
 import {
   createContext,
   Suspense,
@@ -166,11 +166,12 @@ function FenceModel() {
   return <group ref={groupRef} position={[0, 0, 0]} rotation={[0, -0.75, 0]} />;
 }
 
-function CameraRig() {
+function CameraRig({ paused }: { paused: boolean }) {
   const progress = useProgress();
   const { camera } = useThree();
 
   useFrame((_, dt) => {
+    if (paused) return;
     const t = ease(range(progress.current, 0, 1));
     // Eye-level product shot, pull back so nothing clips
     const x = THREE.MathUtils.lerp(1.6, 1.15, t);
@@ -185,7 +186,7 @@ function CameraRig() {
   return null;
 }
 
-function Scene() {
+function Scene({ interactive }: { interactive: boolean }) {
   return (
     <>
       <color attach="background" args={["#000000"]} />
@@ -198,7 +199,23 @@ function Scene() {
       <Suspense fallback={null}>
         <Environment preset="apartment" environmentIntensity={0.45} />
       </Suspense>
-      <CameraRig />
+      <CameraRig paused={interactive} />
+      {interactive ? (
+        <OrbitControls
+          makeDefault
+          target={[0, 0.58, 0]}
+          enablePan={false}
+          enableZoom
+          zoomSpeed={0.6}
+          rotateSpeed={0.6}
+          minDistance={1.4}
+          maxDistance={6}
+          minPolarAngle={0.35}
+          maxPolarAngle={Math.PI / 2.05}
+          enableDamping
+          dampingFactor={0.08}
+        />
+      ) : null}
       <FenceModel />
       <ContactShadows
         position={[0, 0.001, 0]}
@@ -216,8 +233,10 @@ useGLTF.preload(MODEL_URL);
 
 export default function FenceScene3D({
   progressRef,
+  interactive = false,
 }: {
   progressRef: MutableRefObject<number>;
+  interactive?: boolean;
 }) {
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
@@ -226,7 +245,9 @@ export default function FenceScene3D({
   return (
     <ProgressCtx.Provider value={progressRef}>
       <Canvas
-        className="absolute inset-0 h-full w-full"
+        className={`absolute inset-0 h-full w-full ${
+          interactive ? "cursor-grab touch-none active:cursor-grabbing" : "pointer-events-none"
+        }`}
         shadows
         dpr={[1, 1.75]}
         gl={{
@@ -239,7 +260,7 @@ export default function FenceScene3D({
         camera={{ position: [1.6, 0.72, 3.55], fov: 35, near: 0.08, far: 80 }}
       >
         <Suspense fallback={null}>
-          <Scene />
+          <Scene interactive={interactive} />
         </Suspense>
       </Canvas>
     </ProgressCtx.Provider>
