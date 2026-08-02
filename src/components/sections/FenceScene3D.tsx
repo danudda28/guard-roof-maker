@@ -103,22 +103,26 @@ function FenceModel() {
     normalizeModel(root);
 
     const targets = getAnimTargets(root);
+    const n = Math.max(targets.length, 1);
+    const span = 0.34; // each piece animates over this slice of the assembly
     const groups: AnimGroup[] = targets.map((child, i) => {
       const home = child.position.clone();
       const homeQuat = child.quaternion.clone();
       const side = i % 2 === 0 ? -1 : 1;
+      const k = i / n;
       // Modest explode — readable assembly, not chaos
       const from = home
         .clone()
-        .add(new THREE.Vector3(side * (0.18 + i * 0.05), 0.12 + i * 0.04, 0.22 + i * 0.03));
+        .add(new THREE.Vector3(side * (0.22 + k * 0.5), 0.15 + k * 0.35, 0.25 + k * 0.3));
       child.position.copy(home); // start assembled; explode only while scrolling early
+      const start = k * (1 - span);
       return {
         obj: child,
         home,
         homeQuat,
         from,
-        start: 0.02 + i * 0.1,
-        end: 0.02 + i * 0.1 + 0.28,
+        start,
+        end: start + span,
         side,
       };
     });
