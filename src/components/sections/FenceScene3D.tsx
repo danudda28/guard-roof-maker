@@ -173,14 +173,14 @@ function CameraRig({ paused }: { paused: boolean }) {
   useFrame((_, dt) => {
     if (paused) return;
     const t = ease(range(progress.current, 0, 1));
-    // Eye-level product shot, pull back so nothing clips
-    const x = THREE.MathUtils.lerp(1.6, 1.15, t);
-    const y = THREE.MathUtils.lerp(0.72, 0.62, t);
-    const z = THREE.MathUtils.lerp(3.55, 2.95, t);
+    // Eye-level product shot, pulled back so the whole fence stays in frame
+    const x = THREE.MathUtils.lerp(2.0, 1.45, t);
+    const y = THREE.MathUtils.lerp(0.9, 0.8, t);
+    const z = THREE.MathUtils.lerp(4.6, 3.9, t);
     camera.position.x = damp(camera.position.x, x, 3.5, dt);
     camera.position.y = damp(camera.position.y, y, 3.5, dt);
     camera.position.z = damp(camera.position.z, z, 3.5, dt);
-    camera.lookAt(0, 0.58, 0);
+    camera.lookAt(0, 0.7, 0);
   });
 
   return null;
@@ -257,7 +257,7 @@ export default function FenceScene3D({
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 0.95,
         }}
-        camera={{ position: [1.6, 0.72, 3.55], fov: 35, near: 0.08, far: 80 }}
+        camera={{ position: [2.0, 0.9, 4.6], fov: 35, near: 0.08, far: 80 }}
       >
         <Suspense fallback={null}>
           <Scene interactive={interactive} />
