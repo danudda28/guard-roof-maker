@@ -63,11 +63,9 @@ function normalizeModel(root: THREE.Object3D) {
   root.updateMatrixWorld(true);
   const box = new THREE.Box3().setFromObject(root);
   const size = box.getSize(new THREE.Vector3());
-  const longest = Math.max(size.x, size.y, size.z);
-  let scale = 1;
-  if (longest > 5) scale = 1.35 / longest;
-  else if (longest < 0.25) scale = 1.35 / Math.max(longest, 1e-6);
-  else scale = 1.15; // slight enlarge for hero framing
+  const longest = Math.max(size.x, size.y, size.z, 1e-6);
+  // Always fit the model to a predictable size so the camera framing holds.
+  const scale = 1.35 / longest;
   root.scale.setScalar(scale);
   root.updateMatrixWorld(true);
   const box2 = new THREE.Box3().setFromObject(root);
@@ -81,7 +79,15 @@ function getAnimTargets(root: THREE.Object3D): THREE.Object3D[] {
   while (node.children.length === 1 && (node.children[0]?.children.length ?? 0) > 0) {
     node = node.children[0]!;
   }
-  return node.children.length ? [...node.children] : [node];
+  let list: THREE.Object3D[] = node.children.length ? [...node.children] : [node];
+
+  // Expand into sub-parts until the assembly reads as many distinct pieces.
+  while (list.length < 8) {
+    const next = list.flatMap((o) => (o.children.length ? [...o.children] : [o]));
+    if (next.length <= list.length || next.length > 40) break;
+    list = next;
+  }
+  return list;
 }
 
 function FenceModel() {
@@ -95,22 +101,26 @@ function FenceModel() {
     normalizeModel(root);
 
     const targets = getAnimTargets(root);
+    const n = Math.max(targets.length, 1);
+    const span = 0.34; // each piece animates over this slice of the assembly
     const groups: AnimGroup[] = targets.map((child, i) => {
       const home = child.position.clone();
       const homeQuat = child.quaternion.clone();
       const side = i % 2 === 0 ? -1 : 1;
+      const k = i / n;
       // Modest explode — readable assembly, not chaos
       const from = home
         .clone()
-        .add(new THREE.Vector3(side * (0.18 + i * 0.05), 0.12 + i * 0.04, 0.22 + i * 0.03));
+        .add(new THREE.Vector3(side * (0.22 + k * 0.5), 0.15 + k * 0.35, 0.25 + k * 0.3));
       child.position.copy(home); // start assembled; explode only while scrolling early
+      const start = k * (1 - span);
       return {
         obj: child,
         home,
         homeQuat,
         from,
-        start: 0.02 + i * 0.1,
-        end: 0.02 + i * 0.1 + 0.28,
+        start,
+        end: start + span,
         side,
       };
     });
