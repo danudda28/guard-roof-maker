@@ -13,8 +13,9 @@ import {
 } from "react";
 import * as THREE from "three";
 
-const ProgressCtx = createContext<MutableRefObject<number> | null>(null);
 import modelAsset from "@/assets/mx25-duo.glb.asset.json";
+
+const ProgressCtx = createContext<MutableRefObject<number> | null>(null);
 
 const MODEL_URL = modelAsset.url;
 
