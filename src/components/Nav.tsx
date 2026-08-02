@@ -34,8 +34,12 @@ export function Nav() {
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
-        <a href="#top" className="flex items-center gap-2">
-          <span className="h-6 w-1.5 rounded-sm bg-primary" />
+        <a href="#top" className="flex items-center gap-3">
+          <img
+            src="/images/metallic-logo.png"
+            alt="Metallic Group"
+            className="h-9 w-auto object-contain"
+          />
           <span className="font-display text-lg font-bold tracking-tight">
             METALLIC<span className="text-primary">GROUP</span>
           </span>

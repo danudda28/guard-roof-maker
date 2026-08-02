@@ -1,19 +1,83 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X } from "lucide-react";
-const p1 = "/images/proiect-1.jpg";
-const p2 = "/images/proiect-2.jpg";
-const p3 = "/images/proiect-3.jpg";
-const p4 = "/images/proiect-4.jpg";
 import { Reveal } from "@/components/Reveal";
 
 type Cat = "toate" | "garduri" | "acoperisuri";
 
 const PROJECTS = [
-  { img: p1, cat: "garduri", title: "Gard MX 25 cu poartă batantă", alt: "Gard metalic antracit cu poartă în fața unei case" },
-  { img: p2, cat: "acoperisuri", title: "Țiglă metalică Nobel", alt: "Acoperiș din țiglă metalică neagră pe o casă de familie" },
-  { img: p3, cat: "garduri", title: "Gard MX 15 DUO, RAL 8017", alt: "Gard metalic maro tip jaluzea la o proprietate de la țară" },
-  { img: p4, cat: "acoperisuri", title: "Tablă click Canto", alt: "Acoperiș din tablă click gri grafit pe o casă modernă" },
+  {
+    img: "/images/portfolio-mx15-1.png",
+    cat: "garduri" as const,
+    title: "Gard MX 15",
+    alt: "Proiect gard metalic MX 15 Metallic Group",
+  },
+  {
+    img: "/images/portfolio-mx25-1.png",
+    cat: "garduri" as const,
+    title: "Gard MX 25",
+    alt: "Proiect gard metalic MX 25 Metallic Group",
+  },
+  {
+    img: "/images/portfolio-mx60-1.png",
+    cat: "garduri" as const,
+    title: "Gard MX 60",
+    alt: "Proiect gard metalic MX 60 Metallic Group",
+  },
+  {
+    img: "/images/portfolio-mc75-1.png",
+    cat: "garduri" as const,
+    title: "Gard MC 75 casetat",
+    alt: "Proiect gard casetat MC 75 Metallic Group",
+  },
+  {
+    img: "/images/portfolio-mx15-2.png",
+    cat: "garduri" as const,
+    title: "Gard MX 15 — montaj",
+    alt: "Montaj gard MX 15 Metallic Group",
+  },
+  {
+    img: "/images/portfolio-mx25-2.png",
+    cat: "garduri" as const,
+    title: "Gard MX 25 — proprietate",
+    alt: "Gard MX 25 la proprietate rezidențială",
+  },
+  {
+    img: "/images/portfolio-mx60-2.png",
+    cat: "garduri" as const,
+    title: "Gard MX 60 — proiect",
+    alt: "Proiect gard MX 60 Metallic Group",
+  },
+  {
+    img: "/images/portfolio-mc105-1.png",
+    cat: "garduri" as const,
+    title: "Gard MC 105",
+    alt: "Proiect gard casetat MC 105 Metallic Group",
+  },
+  {
+    img: "/images/produs-tigla.webp",
+    cat: "acoperisuri" as const,
+    title: "Țiglă metalică Briliant",
+    alt: "Țiglă metalică Briliant Metallic Group",
+  },
+  {
+    img: "/images/produs-canto.webp",
+    cat: "acoperisuri" as const,
+    title: "Tablă click Canto",
+    alt: "Tablă click Canto Metallic Group",
+  },
+  {
+    img: "/images/produs-nobel.webp",
+    cat: "acoperisuri" as const,
+    title: "Țiglă metalică Nobel",
+    alt: "Țiglă metalică Nobel Metallic Group",
+  },
+  {
+    img: "/images/produs-duo.webp",
+    cat: "garduri" as const,
+    title: "Gard MX 15 DUO",
+    alt: "Gard metalic MX 15 DUO Metallic Group",
+  },
 ] as const;
 
 const FILTERS: { key: Cat; label: string }[] = [

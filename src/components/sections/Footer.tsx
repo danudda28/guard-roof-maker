@@ -24,9 +24,16 @@ export function Footer() {
 
         <div className="grid gap-10 py-12 md:grid-cols-3">
           <div>
-            <span className="font-display text-lg font-bold">
-              METALLIC<span className="text-primary">GROUP</span>
-            </span>
+            <div className="flex items-center gap-3">
+              <img
+                src="/images/metallic-logo.png"
+                alt="Metallic Group"
+                className="h-10 w-auto object-contain"
+              />
+              <span className="font-display text-lg font-bold">
+                METALLIC<span className="text-primary">GROUP</span>
+              </span>
+            </div>
             <p className="mt-4 text-sm text-muted-foreground">
               Furnizor de soluții moderne pentru garduri metalice, țiglă metalică și tablă click.
               Peste 14 ani de experiență și 20.000 de proiecte finalizate.

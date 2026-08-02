@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
-const ceoImg = "/images/ceo.jpg";
 import { Reveal } from "@/components/Reveal";
 
 const STATS = [
@@ -48,8 +47,8 @@ export function About() {
           >
             <div className="relative overflow-hidden rounded-[5px] bg-card">
               <img
-                src={ceoImg}
-                alt="Iulian, director Metallic Group"
+                src="/images/ceo.webp"
+                alt="Iulian — Director Metallic Group"
                 loading="lazy"
                 width={900}
                 height={1100}
@@ -71,21 +70,21 @@ export function About() {
         <div>
           <Reveal>
             <p className="eyebrow">Despre noi</p>
-            <blockquote className="mt-4 text-2xl leading-snug font-bold uppercase sm:text-4xl">
-              „Scopul nostru este de a oferi clienților soluții potrivite și durabile pentru
-              locuința lor”
+            <blockquote className="mt-4 text-2xl leading-snug font-bold uppercase sm:text-3xl">
+              „Ne angajăm să oferim un serviciu de excepție. De la consultarea inițială până la
+              instalarea finală și dincolo de aceasta.”
             </blockquote>
           </Reveal>
           <Reveal delay={0.1}>
             <div className="mt-6 space-y-4 text-muted-foreground">
               <p>
-                Ne angajăm să oferim un serviciu de excepție, de la momentul consultării inițiale
-                până la instalarea finală și dincolo de aceasta.
-              </p>
-              <p>
-                Sistemul de învelitori este mai mult decât un simplu material de acoperiș: este
+                Sistemul de învelitori este mai mult decât un simplu material de acoperiș. Este
                 rezultatul a ani de cercetare și dezvoltare, conceput pentru o performanță de
                 neegalat în durabilitate și rezistență la intemperii.
+              </p>
+              <p>
+                Continuăm să inovăm și să îmbunătățim produsele noastre, pentru ca fiecare familie
+                să aibă încredere în acoperișul și gardul lor, an după an.
               </p>
               <p>
                 Aceasta este promisiunea noastră pentru fiecare client Metallic Group — un produs

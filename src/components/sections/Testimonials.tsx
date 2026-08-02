@@ -5,19 +5,34 @@ import { Reveal } from "@/components/Reveal";
 
 const REVIEWS = [
   {
-    name: "Andrei M.",
-    city: "București",
-    text: "Gard MX 25 pe 80 de metri liniari. Consultanța a fost reală, nu doar vânzare — ne-au recomandat alt model decât cel pe care îl voiam și a ieșit perfect.",
+    name: "Marian Bajenaru",
+    city: "Client Google",
+    text: "Mulțumesc pentru ajutorul acordat de către domnul Alexandru Croitoru, de la elaborarea ofertei până la detalii în amănunt despre montaj. O firmă excelentă, o recomand la toată lumea.",
   },
   {
-    name: "Cristina D.",
-    city: "Constanța",
-    text: "Acoperiș din țiglă metalică pentru o casă pe două ape. Livrare la timp, accesorii complete, fără surprize la preț.",
+    name: "Marcel Plopeanu",
+    city: "Client Google",
+    text: "Calitate, seriozitate, promptitudine și lucrare bine făcută. Recomand tuturor celor care au nevoie de un acoperiș de calitate.",
   },
   {
-    name: "Marius P.",
-    city: "Giurgiu",
-    text: "Calitate foarte bună a tablei și finisaje curate. Recomand pentru oricine vrea un gard care chiar ține.",
+    name: "Corina Stefan",
+    city: "Client Google",
+    text: "O echipă cu valori reale, oneste, puse în lucru de oameni faini. Atenți la detalii și orientați spre clienți.",
+  },
+  {
+    name: "Razvan Rosu",
+    city: "Client Google",
+    text: "Cei mai buni și calitativ de pe piață! Recomand cu toată încrederea.",
+  },
+  {
+    name: "Laurențiu Urum",
+    city: "Client Google",
+    text: "Suntem foarte mulțumiți, sunt o echipă de profesioniști. Recomand.",
+  },
+  {
+    name: "Grig Adamov",
+    city: "Client Google",
+    text: "Oameni amabili, serviabili, produsele corespund descrierii. Per total o experiență foarte plăcută!",
   },
 ];
 

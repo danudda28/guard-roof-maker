@@ -1,7 +1,5 @@
 import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import { Check } from "lucide-react";
-const gardImg = "/images/produs-garduri.jpg";
-const tiglaImg = "/images/produs-tigla.jpg";
 import { Reveal } from "@/components/Reveal";
 import { MetalButton } from "@/components/ui/metal-button";
 import { useLead, type ProjectType } from "@/components/lead/LeadContext";
@@ -20,8 +18,8 @@ const CARDS: Card[] = [
   {
     title: "Garduri metalice",
     desc: "Gamă completă MX, DUO și casetat — design tip jaluzea, profile rigidizate și intimitate reglabilă.",
-    img: gardImg,
-    alt: "Panou de gard metalic tip jaluzea în nuanță antracit",
+    img: "/images/produs-garduri.webp",
+    alt: "Gard metalic Metallic Group tip jaluzea",
     benefits: [
       "Modele MX 15 / 25 / 60, DUO și casetat",
       "Toată paleta RAL, finisaje mat și lemn",
@@ -34,8 +32,8 @@ const CARDS: Card[] = [
   {
     title: "Țiglă metalică & tablă click",
     desc: "Daily, Briliant, Nobel și sistemele Smart, plus tablă click Canto pentru linii moderne.",
-    img: tiglaImg,
-    alt: "Acoperiș din țiglă metalică antracit pe o casă modernă",
+    img: "/images/produs-tigla.webp",
+    alt: "Țiglă metalică Briliant Metallic Group",
     benefits: [
       "Sisteme complete cu accesorii originale",
       "Montaj rapid, greutate redusă pe șarpantă",

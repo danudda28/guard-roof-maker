@@ -16,7 +16,7 @@ import { MetalButton } from "@/components/ui/metal-button";
 
 const TITLE = "Garduri metalice și țiglă metalică | Metallic Group";
 const DESC =
-  "Metallic Group produce garduri metalice, țiglă metalică și tablă click în București, Constanța, Giurgiu și Alexandria. 14+ ani experiență, consultanță gratuită.";
+  "Soluțiile moderne de la Metallic Group pentru un cămin confortabil și protejat. Garduri metalice, țiglă metalică și tablă click — consultanță, transport și montaj.";
 
 export const Route = createFileRoute("/")({
   component: () => (

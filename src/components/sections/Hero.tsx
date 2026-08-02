@@ -1,7 +1,6 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { ChevronDown } from "lucide-react";
-const heroImg = "/images/hero-gard.jpg";
 import { MetalButton } from "@/components/ui/metal-button";
 import { useLead } from "@/components/lead/LeadContext";
 
@@ -19,13 +18,16 @@ export function Hero() {
       className="relative isolate flex min-h-[100svh] items-center overflow-hidden"
     >
       <motion.div style={{ y }} className="absolute inset-0 z-0">
-        <img
-          src={heroImg}
-          alt="Gard metalic modern antracit montat în fața unei case contemporane"
-          width={1920}
-          height={1088}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="/images/hero-gard.png"
           className="h-[118%] w-full object-cover"
-        />
+        >
+          <source src="/hero-video.mp4" type="video/mp4" />
+        </video>
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/30" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/70" />
       </motion.div>
@@ -46,8 +48,8 @@ export function Hero() {
           transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className="mt-5 max-w-4xl text-4xl leading-[1.02] font-bold uppercase sm:text-6xl lg:text-7xl"
         >
-          Garduri și acoperișuri metalice
-          <span className="block text-gold">făcute să reziste</span>
+          Pentru un cămin
+          <span className="block text-gold">confortabil și protejat</span>
         </motion.h1>
 
         <motion.p
@@ -56,9 +58,9 @@ export function Hero() {
           transition={{ duration: 0.7, delay: 0.25 }}
           className="mt-6 max-w-xl text-base text-muted-foreground sm:text-lg"
         >
-          Producem garduri metalice, țiglă metalică și tablă click pentru case din toată România.
-          Peste 14 ani de experiență, 20.000 de proiecte finalizate și consultanță gratuită înainte
-          de orice decizie.
+          Cu o gamă diversificată de produse de înaltă calitate — garduri metalice, țiglă
+          metalică și tablă click — suntem partenerul de încredere pentru construcție și
+          amenajare. Consultanță, design, transport și montaj profesional.
         </motion.p>
 
         <motion.div
