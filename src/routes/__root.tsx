@@ -95,10 +95,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/191d9569-b7c5-4936-8375-2c74d7e264d5/id-preview-c1fdf252--70211a83-ddde-4c96-a677-ad391d4db3ed.lovable.app-1785676294055.png" },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      ...(import.meta.env.DEV
+        ? []
+        : [
+            {
+              rel: "stylesheet",
+              href: appCss,
+            },
+          ]),
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
