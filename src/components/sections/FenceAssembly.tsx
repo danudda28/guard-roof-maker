@@ -52,7 +52,7 @@ export function FenceAssembly() {
             Gardul care se asamblează
           </h2>
           <p className="mx-auto mt-3 max-w-lg text-sm text-muted-foreground">
-            Scroll — un gard Metallic se ridică în 3D, fluid, piesă cu piesă.
+            Scroll — gardul real MX 60 DUO se asamblează în 3D, piesă cu piesă.
           </p>
         </motion.div>
 
